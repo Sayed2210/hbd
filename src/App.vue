@@ -360,13 +360,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, nextTick } from "vue";
+import { ref, onMounted } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { EffectCoverflow, Pagination, Navigation } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/effect-coverflow";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
 
 // Types
 interface Particle {
