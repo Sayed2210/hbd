@@ -593,7 +593,7 @@ const createConfetti = (): void => {
     id: i,
     left: Math.random() * 100,
     delay: Math.random() * 2,
-    color: colors[Math.floor(Math.random() * colors.length)],
+    color: colors[Math.floor(Math.random() * colors.length)] || colors[0],
   }));
 };
 
