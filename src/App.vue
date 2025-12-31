@@ -589,12 +589,16 @@ const revealFinal = (): void => {
 
 const createConfetti = (): void => {
   const colors = ["#ff69b4", "#ff1493", "#ff85c1", "#ffa5d8", "#ff6b9d"];
-  confettiPieces.value = Array.from({ length: 50 }, (_, i) => ({
-    id: i,
-    left: Math.random() * 100,
-    delay: Math.random() * 2,
-    color: colors[Math.floor(Math.random() * colors.length)] || colors[0],
-  }));
+  confettiPieces.value = Array.from(
+    { length: 50 },
+    (_, i) =>
+      ({
+        id: i,
+        left: Math.random() * 100,
+        delay: Math.random() * 2,
+        color: colors[Math.floor(Math.random() * colors.length)] || colors[0],
+      } as ConfettiPiece)
+  );
 };
 
 // Lifecycle
