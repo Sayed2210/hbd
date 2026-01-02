@@ -1,4 +1,8 @@
 <template>
+  <div style="display: none">
+    <div ref="youtubePlayer"></div>
+  </div>
+
   <div
     v-if="currentSection === 'landing'"
     class="min-h-screen gradient-bg flex items-center justify-center relative overflow-hidden"
@@ -225,20 +229,21 @@
 
       <div class="mb-8 flex justify-center">
         <button
-          @click="musicPlaying = !musicPlaying"
+          @click="toggleMusic"
           class="bg-white rounded-full px-6 py-3 shadow-lg hover:shadow-xl transition-shadow flex items-center gap-2 text-pink-600"
         >
           <span class="w-5 h-5">{{ musicPlaying ? "⏸️" : "▶️" }}</span>
           {{ musicPlaying ? "Pause Music" : "Play Music" }}
         </button>
       </div>
+      <!-- Hidden audio element -->
 
       <div class="bg-white rounded-3xl shadow-2xl p-8 mb-4">
         <swiper
           :effect="'coverflow'"
           :grabCursor="true"
           :centeredSlides="true"
-          :slidesPerView="'auto'"
+          :slidesPerView="1"
           :coverflowEffect="{
             rotate: 50,
             stretch: 0,
@@ -246,8 +251,8 @@
             modifier: 1,
             slideShadows: true,
           }"
-          :pagination="true"
           :navigation="true"
+          :loop="true"
           :modules="modules"
           class="mySwiper h-96"
         >
@@ -363,6 +368,15 @@
 import { ref, onMounted } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { EffectCoverflow, Pagination, Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/effect-coverflow";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+
+import image1 from "./assets/1.jpeg";
+import image2 from "./assets/2.jpeg";
+import image4 from "./assets/4.jpeg";
+import image5 from "./assets/5.jpeg";
 
 // Types
 interface Particle {
@@ -413,6 +427,66 @@ const musicPlaying = ref<boolean>(false);
 const particles = ref<Particle[]>([]);
 const confettiPieces = ref<ConfettiPiece[]>([]);
 const modules = [EffectCoverflow, Pagination, Navigation];
+
+const audioPlayer = ref<HTMLAudioElement | null>(null);
+const youtubePlayer = ref<HTMLDivElement | null>(null);
+let player: any = null;
+
+onMounted(() => {
+  // Check if API is already loaded
+  if ((window as any).YT) {
+    initPlayer();
+  } else {
+    // Load YouTube IFrame API
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName("script")[0];
+    firstScriptTag?.parentNode?.insertBefore(tag, firstScriptTag);
+
+    // Initialize player when API is ready
+    (window as any).onYouTubeIframeAPIReady = () => {
+      initPlayer();
+    };
+  }
+});
+
+const initPlayer = () => {
+  if (!youtubePlayer.value) {
+    console.error("YouTube player element not found");
+    return;
+  }
+
+  player = new (window as any).YT.Player(youtubePlayer.value, {
+    height: "0",
+    width: "0",
+    videoId: "z4KMUyXeXEk",
+    playerVars: {
+      autoplay: 0,
+      controls: 0,
+      loop: 1,
+      playlist: "z4KMUyXeXEk",
+    },
+    events: {
+      onReady: (event: any) => {
+        console.log("YouTube player ready");
+      },
+    },
+  });
+};
+
+const toggleMusic = () => {
+  if (!player || !player.playVideo) {
+    console.error("Player not ready");
+    return;
+  }
+  if (musicPlaying.value) {
+    player.pauseVideo();
+  } else {
+    player.playVideo();
+  }
+
+  musicPlaying.value = !musicPlaying.value;
+};
 
 // Data
 const timeline = ref<TimelineEvent[]>([
@@ -501,17 +575,19 @@ const letters = ref<Letter[]>([
 
 const galleryImages = ref<GalleryImage[]>([
   {
-    icon: "/src/assets/1.jpeg",
+    icon: image1,
     caption: "Our first photo together - the start of something beautiful",
   },
   {
-    icon: "/src/assets/2.jpeg",
+    icon: image2,
     caption: "That time we laughed until we cried",
   },
-  // { icon: "/src/assets/3.jpeg", caption: "Watching sunsets, making memories" },
-  { icon: "/src/assets/4.jpeg", caption: "Adventures and silly moments" },
   {
-    icon: "/src/assets/5.jpeg",
+    icon: image4,
+    caption: "Adventures and silly moments",
+  },
+  {
+    icon: image5,
     caption: "Late night food runs and deep conversations",
   },
   // { icon: "./src/assets/6.jpeg", caption: "You make every moment special" },
