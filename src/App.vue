@@ -428,7 +428,6 @@ const particles = ref<Particle[]>([]);
 const confettiPieces = ref<ConfettiPiece[]>([]);
 const modules = [EffectCoverflow, Pagination, Navigation];
 
-const audioPlayer = ref<HTMLAudioElement | null>(null);
 const youtubePlayer = ref<HTMLDivElement | null>(null);
 let player: any = null;
 
@@ -468,7 +467,7 @@ const initPlayer = () => {
     },
     events: {
       onReady: (event: any) => {
-        console.log("YouTube player ready");
+        console.log(event, "YouTube player ready");
       },
     },
   });
